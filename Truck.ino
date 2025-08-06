@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 // === Konfigurasi PIN Digital Input ===
 const int digitalInputPins[19] = {
   2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 
@@ -40,6 +42,9 @@ bool hazardActive = false;
 unsigned long lastBlinkTime = 0;
 bool blinkState = false;
 const unsigned long blinkInterval = 500;  // ms
+
+// Tambahkan array untuk menyimpan status sebelumnya
+int lastInputStates[19] = {0};
 
 void setup() {
   Serial.begin(115200);
@@ -120,13 +125,18 @@ void updateBlinkingRelays() {
 }
 
 void reportInputs() {
+  bool changed = false;
   for (int i = 0; i < 19; i++) {
     int state = digitalRead(digitalInputPins[i]) == LOW ? 1 : 0;
-    Serial.print("DI");
-    Serial.print(i + 1);
-    Serial.print("=");
-    Serial.print(state);
-    Serial.print("  ");
+    if (state != lastInputStates[i]) {
+      Serial.print("DI");
+      Serial.print(i + 1);
+      Serial.print("=");
+      Serial.print(state);
+      Serial.print("  ");
+      lastInputStates[i] = state;
+      changed = true;
+    }
   }
-  Serial.println();
+  if (changed) Serial.println();
 }
