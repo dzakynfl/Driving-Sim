@@ -85,21 +85,13 @@ void handleSerial() {
         digitalWrite(digitalOutputPins[0], HIGH);
         digitalWrite(digitalOutputPins[8], HIGH);
       }
-    } else {
-      // Kontrol DO umum
-      for (int i = 0; i < 10; i++) {
-        if (input.startsWith(String(digitalOutputNames[i]) + ":")) {
-          bool state = input.endsWith("1");
-          digitalOutputStates[i] = state;
-
-          // Hindari kontrol langsung ke relay sein jika sedang blinking
-          if ((i == 0 && (leftSignBlink || hazardActive)) ||
-              (i == 8 && (rightSignBlink || hazardActive))) {
-            // Abaikan, akan dikontrol oleh blinking
-          } else {
-            digitalWrite(digitalOutputPins[i], state ? LOW : HIGH); // Aktif LOW
-          }
-        }
+    } else if (input.startsWith("DO")) {
+      // Format: DOx:1 atau DOx:0
+      int idx = input.substring(2, input.indexOf(':')).toInt() - 1;
+      if (idx >= 0 && idx < 10 && idx != 0 && idx != 8) { // Kecuali SignL (0) dan SignR (8)
+        bool state = input.endsWith("1");
+        digitalOutputStates[idx] = state;
+        digitalWrite(digitalOutputPins[idx], state ? LOW : HIGH); // Aktif LOW
       }
     }
   }
