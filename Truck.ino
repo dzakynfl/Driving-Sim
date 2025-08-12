@@ -117,18 +117,14 @@ void updateBlinkingRelays() {
 }
 
 void reportInputs() {
-  bool changed = false;
   for (int i = 0; i < 19; i++) {
     int state = digitalRead(digitalInputPins[i]) == LOW ? 1 : 0;
     if (state != lastInputStates[i]) {
       Serial.print("DI");
       Serial.print(i + 1);
       Serial.print("=");
-      Serial.print(state);
-      Serial.print("  ");
+      Serial.println(state); // Cetak di baris baru
       lastInputStates[i] = state;
-      changed = true;
     }
   }
-  if (changed) Serial.println();
 }
