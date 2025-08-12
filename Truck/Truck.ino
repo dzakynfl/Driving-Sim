@@ -47,7 +47,7 @@ const unsigned long blinkInterval = 500;  // ms
 // Tambahkan array untuk menyimpan status sebelumnya
 int lastInputStates[19] = {0};
 
-// Servo
+// Servo Fuel dan Temp
 Servo fuelServo;
 Servo tempServo;
 const int fuelServoPin = 33;    // Ganti sesuai wiring Anda
