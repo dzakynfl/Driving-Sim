@@ -56,7 +56,7 @@ const int tempServoPin = 34;    // Ganti sesuai wiring Anda
 int fuelAngle = 180;   // Default posisi (empty)
 int tempAngle = 90;    // Default posisi (min)
 
-// Motor DC BTS7960
+// Motor DC BTS7960 check
 const int RPWM = 35;   // Ganti sesuai wiring Anda
 const int LPWM = 36;   // Ganti sesuai wiring Anda
 int motorSpeed = 0;    // 0-255 PWM
