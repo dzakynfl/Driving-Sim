@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <Servo.h>
 
 // === Konfigurasi PIN Digital Input ===
 const int digitalInputPins[19] = {
@@ -46,6 +47,21 @@ const unsigned long blinkInterval = 500;  // ms
 // Tambahkan array untuk menyimpan status sebelumnya
 int lastInputStates[19] = {0};
 
+// Servo
+Servo fuelServo;
+Servo tempServo;
+const int fuelServoPin = 33;    // Ganti sesuai wiring Anda
+const int tempServoPin = 34;    // Ganti sesuai wiring Anda
+
+int fuelAngle = 180;   // Default posisi (empty)
+int tempAngle = 90;    // Default posisi (min)
+
+// Motor DC BTS7960
+const int RPWM = 35;   // Ganti sesuai wiring Anda
+const int LPWM = 36;   // Ganti sesuai wiring Anda
+int motorSpeed = 0;    // 0-255 PWM
+int motorDir = 1;      // 1 = maju, -1 = mundur
+
 void setup() {
   Serial.begin(115200);
 
@@ -59,12 +75,33 @@ void setup() {
     pinMode(digitalOutputPins[i], OUTPUT);
     digitalWrite(digitalOutputPins[i], HIGH); // Relay aktif LOW
   }
+
+  // Servo setup
+  fuelServo.attach(fuelServoPin);
+  tempServo.attach(tempServoPin);
+
+  // Motor DC BTS7960 setup
+  pinMode(RPWM, OUTPUT);
+  pinMode(LPWM, OUTPUT);
 }
 
 void loop() {
   handleSerial();
   updateBlinkingRelays();
   reportInputs();
+
+  // Update servo dan motor DC
+  fuelServo.write(fuelAngle);
+  tempServo.write(tempAngle);
+
+  if (motorDir == 1) {
+    analogWrite(RPWM, motorSpeed);
+    analogWrite(LPWM, 0);
+  } else {
+    analogWrite(RPWM, 0);
+    analogWrite(LPWM, motorSpeed);
+  }
+
   delay(100);
 }
 
@@ -93,6 +130,22 @@ void handleSerial() {
         digitalOutputStates[idx] = state;
         digitalWrite(digitalOutputPins[idx], state ? LOW : HIGH); // Aktif LOW
       }
+    } 
+    // Servo Fuel: Fuel:x (x = 0-100)
+    else if (input.startsWith("Fuel:")) {
+      int val = input.substring(5).toInt(); // 0-100
+      fuelAngle = map(val, 0, 100, 180, 90); // 0=180°, 100=90°
+    }
+    // Servo Temp: Ts:x (x = 0-100)
+    else if (input.startsWith("Ts:")) {
+      int val = input.substring(3).toInt(); // 0-100
+      tempAngle = map(val, 0, 100, 90, 180); // 0=90°, 100=180°
+    }
+    // Motor DC: Vel:x (x = -255...255)
+    else if (input.startsWith("Vel:")) {
+      int val = input.substring(4).toInt(); // -255...255
+      motorDir = (val >= 0) ? 1 : -1;
+      motorSpeed = constrain(abs(val), 0, 255);
     }
   }
 }
