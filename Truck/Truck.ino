@@ -59,6 +59,8 @@ int tempAngle = 90;    // Default posisi (min)
 // Motor DC BTS7960 check
 const int RPWM = 35;   // Ganti sesuai wiring Anda
 const int LPWM = 36;   // Ganti sesuai wiring Anda
+const int EN_R = 37;   // Pin enable kanan BTS7960
+const int EN_L = 38;   // Pin enable kiri BTS7960
 int motorSpeed = 0;    // 0-255 PWM
 int motorDir = 1;      // 1 = maju, -1 = mundur
 
@@ -83,6 +85,12 @@ void setup() {
   // Motor DC BTS7960 setup
   pinMode(RPWM, OUTPUT);
   pinMode(LPWM, OUTPUT);
+
+  // Enable BTS7960
+  pinMode(EN_R, OUTPUT);
+  pinMode(EN_L, OUTPUT);
+  digitalWrite(EN_R, HIGH); // Aktifkan driver
+  digitalWrite(EN_L, HIGH); // Aktifkan driver
 }
 
 void loop() {
