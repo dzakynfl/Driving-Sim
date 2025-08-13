@@ -141,11 +141,11 @@ void handleSerial() {
       int val = input.substring(3).toInt(); // 0-100
       tempAngle = map(val, 0, 100, 90, 180); // 0=90°, 100=180°
     }
-    // Motor DC: Vel:x (x = -255...255)
+    // Motor DC: Vel:x (x = 0...100 dari Unity, selalu CCW)
     else if (input.startsWith("Vel:")) {
-      int val = input.substring(4).toInt(); // -255...255
-      motorDir = (val >= 0) ? 1 : -1;
-      motorSpeed = constrain(abs(val), 0, 255);
+      int val = input.substring(4).toInt(); // 0...100 dari Unity
+      motorDir = -1; // Selalu CCW
+      motorSpeed = constrain(map(val, 0, 100, 0, 53), 0, 53); // Map ke 0-53
     }
   }
 }
