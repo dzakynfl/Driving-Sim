@@ -138,8 +138,8 @@ void handleSerial() {
     }
     // Servo Temp: Ts:x (x = 0-100)
     else if (input.startsWith("Ts:")) {
-      int val = input.substring(3).toInt(); // 0-100
-      tempAngle = map(val, 0, 100, 90, 180); // 0=90°, 100=180°
+      int val = input.substring(3).toInt(); // 0-16
+      tempAngle = map(val, 0, 16, 90, 180); // 0=90°, 100=180°
     }
     // Motor DC: Vel:x (x = 0...100 dari Unity, selalu CCW)
     else if (input.startsWith("Vel:")) {
